@@ -36,7 +36,7 @@ jobs:
     steps:
       - name: Build + tag a Docker image
         run : | 
-          docker build -t calculator-img .
+          docker build -t calculator-img /home/runner/work/Calculator/Dockerfile
           docker tag Calculator-img ${{ secrets.DOCKER_USERNAME }}/Calculator-img:${{ github.run-number }}
       - name: Dockerhub login + push
         run: |
