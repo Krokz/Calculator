@@ -29,12 +29,17 @@ jobs:
         cache: maven
       
     - name: Build + tag a Docker image
-      run : | 
-        pwd
-        docker build -t calculator-img .
-        docker tag calculator-img ${{ secrets.DOCKER_USERNAME }}/calculator-img:${{ github.run-number }}
+      run : docker build -t calculator-img .
+        
+    - name: Bump Version
+      id: bump
+      uses: nnichols/maven-version-bump-action@v3
+      with:
+        github-token: ${{ secrets.github_token }}  
+        
     - name: Dockerhub login + push
       run: |
         docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-        docker push ${{ secrets.DOCKER_USERNAME }}/calculator-img:${{ github.run-number }}
+        docker tag calculator-img ${{ secrets.DOCKER_USERNAME }}/calculator-img:${{ steps.bump.outputs.version }}
+        docker push ${{ secrets.DOCKER_USERNAME }}/calculator-img:${{ steps.bump.outputs.version }}
 
