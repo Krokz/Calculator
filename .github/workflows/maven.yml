@@ -15,7 +15,7 @@ on:
     branches: [ "master" ]
 
 jobs:
-  build:
+  build-jar:
 
     runs-on: ubuntu-latest
 
@@ -33,4 +33,16 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         path: Calculator/
+  build-docker-img:
+    needs: build-jar
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build + tag a Docker image
+        run : | 
+          docker build -t Calculator-img .
+          docker tag Calculator-img ${{ secrets.DOCKER_USERNAME }}/Calculator-img:${{ github.run-number }}
+      - name: Dockerhub login + push
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/Calculator-img:${{ github.run-number }}
 
