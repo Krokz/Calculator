@@ -27,20 +27,14 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
         cache: maven
-    - name: Build with Maven
-      run: mvn -B -X package --file pom.xml
-
-  build-docker-img:
-    needs: build-jar
-    runs-on: ubuntu-latest
-    steps:
-      - name: Build + tag a Docker image
-        run : | 
-          pwd
-          docker build -t calculator-img /home/runner/work/Calculator/Dockerfile
-          docker tag Calculator-img ${{ secrets.DOCKER_USERNAME }}/Calculator-img:${{ github.run-number }}
-      - name: Dockerhub login + push
-        run: |
-          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker push ${{ secrets.DOCKER_USERNAME }}/Calculator-img:${{ github.run-number }}
+      
+    - name: Build + tag a Docker image
+      run : | 
+        pwd
+        docker build -t calculator-img /home/runner/work/Calculator/Dockerfile
+        docker tag Calculator-img ${{ secrets.DOCKER_USERNAME }}/Calculator-img:${{ github.run-number }}
+    - name: Dockerhub login + push
+      run: |
+        docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+        docker push ${{ secrets.DOCKER_USERNAME }}/Calculator-img:${{ github.run-number }}
 
