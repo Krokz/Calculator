@@ -29,17 +29,14 @@ jobs:
         cache: maven
     - name: Build with Maven
       run: mvn -B -X package --file pom.xml
-    - name: Archive production artifacts
-      uses: actions/upload-artifact@v3
-      with:
-        path: Calculator/
+
   build-docker-img:
     needs: build-jar
     runs-on: ubuntu-latest
     steps:
       - name: Build + tag a Docker image
         run : | 
-          docker build -t Calculator-img .
+          docker build -t calculator-img .
           docker tag Calculator-img ${{ secrets.DOCKER_USERNAME }}/Calculator-img:${{ github.run-number }}
       - name: Dockerhub login + push
         run: |
